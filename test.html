@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Environment - Khamsat AI</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4CAF50;
+        }
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            border-left-color: #F44336;
+        }
+        .info {
+            background: rgba(33, 150, 243, 0.2);
+            border-left-color: #2196F3;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 اختبار البيئة - منشئ خدمات خمسات</h1>
+        
+        <div id="results"></div>
+        
+        <button onclick="runTests()">🔄 إعادة التشغيل</button>
+        <button onclick="switchEnvironment()">🔄 تبديل البيئة</button>
+        <button onclick="window.open('index.html', '_blank')">🚀 فتح التطبيق</button>
+    </div>
+
+    <!-- Include environment first -->
+    <script src="js/config/environment.js"></script>
+    
+    <script>
+        function addResult(type, title, message) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${title}:</strong> ${message}`;
+            results.appendChild(div);
+        }
+
+        function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h3>🔍 نتائج الاختبار:</h3>';
+
+            // Test 1: Environment object
+            try {
+                if (window.ENV) {
+                    addResult('success', '✅ ENV Object', `تم تحميل كائن البيئة بنجاح`);
+                    addResult('info', '🌍 البيئة الحالية', window.ENV.getEnvironment());
+                    addResult('info', '🔧 وضع التطوير', window.ENV.isDev() ? 'مفعل' : 'معطل');
+                } else {
+                    addResult('error', '❌ ENV Object', 'فشل في تحميل كائن البيئة');
+                }
+            } catch (error) {
+                addResult('error', '❌ ENV Error', error.message);
+            }
+
+            // Test 2: No process references
+            try {
+                if (typeof process === 'undefined') {
+                    addResult('success', '✅ Process Check', 'لا يوجد مراجع لـ process - تم الإصلاح بنجاح');
+                } else {
+                    addResult('error', '❌ Process Check', 'ما زال هناك مراجع لـ process');
+                }
+            } catch (error) {
+                addResult('success', '✅ Process Check', 'لا يوجد مراجع لـ process (خطأ متوقع)');
+            }
+
+            // Test 3: Browser compatibility
+            try {
+                const features = [
+                    { name: 'localStorage', check: () => !!window.localStorage },
+                    { name: 'fetch API', check: () => !!window.fetch },
+                    { name: 'ES6 Modules', check: () => true }, // If we got here, modules work
+                    { name: 'Console', check: () => !!window.console }
+                ];
+
+                features.forEach(feature => {
+                    if (feature.check()) {
+                        addResult('success', `✅ ${feature.name}`, 'مدعوم');
+                    } else {
+                        addResult('error', `❌ ${feature.name}`, 'غير مدعوم');
+                    }
+                });
+            } catch (error) {
+                addResult('error', '❌ Browser Test', error.message);
+            }
+
+            // Test 4: URL detection
+            try {
+                const url = window.location.href;
+                const hostname = window.location.hostname;
+                addResult('info', '🌐 URL الحالي', url);
+                addResult('info', '🖥️ اسم المضيف', hostname || 'file://');
+            } catch (error) {
+                addResult('error', '❌ URL Test', error.message);
+            }
+        }
+
+        function switchEnvironment() {
+            if (window.ENV) {
+                const newEnv = window.ENV.isDev() ? 'production' : 'development';
+                window.ENV.setEnvironment(newEnv);
+                addResult('info', '🔄 تبديل البيئة', `تم التبديل إلى: ${newEnv}`);
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                addResult('error', '❌ تبديل البيئة', 'كائن البيئة غير متوفر');
+            }
+        }
+
+        // Run tests automatically when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+</html>

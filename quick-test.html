@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار سريع - منشئ خدمات خمسات</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background: #f8f9fa;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .success { background: #d4edda; border-left-color: #28a745; }
+        .error { background: #f8d7da; border-left-color: #dc3545; }
+        .warning { background: #fff3cd; border-left-color: #ffc107; }
+        .info { background: #d1ecf1; border-left-color: #17a2b8; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .status { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 اختبار سريع للتطبيق</h1>
+        
+        <div id="results">
+            <p>اضغط "تشغيل الاختبار" للتحقق من عمل النظام...</p>
+        </div>
+        
+        <button onclick="runQuickTest()">🔍 تشغيل الاختبار</button>
+        <button onclick="openApp()">🚀 فتح التطبيق</button>
+        <button onclick="testAI()">🤖 اختبار AI</button>
+    </div>
+
+    <!-- Load environment first -->
+    <script src="js/config/environment.js"></script>
+    
+    <script type="module">
+        import { API_CONFIG } from './js/config/api.js';
+        import AIService from './js/services/aiService.js';
+        
+        window.API_CONFIG = API_CONFIG;
+        window.AIService = AIService;
+        
+        window.runQuickTest = function() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<h3>🔍 نتائج الاختبار:</h3>';
+            
+            // Test 1: Environment
+            addResult(window.ENV ? 'success' : 'error', 
+                     'بيئة التطبيق', 
+                     window.ENV ? `✅ محملة (${window.ENV.getEnvironment()})` : '❌ غير محملة');
+            
+            // Test 2: API Config
+            addResult(window.API_CONFIG ? 'success' : 'error',
+                     'إعدادات API',
+                     window.API_CONFIG ? '✅ محملة' : '❌ غير محملة');
+            
+            // Test 3: API Key
+            const hasApiKey = window.API_CONFIG && window.API_CONFIG.DEEPSEEK.API_KEY && 
+                            window.API_CONFIG.DEEPSEEK.API_KEY !== 'your-api-key-here';
+            addResult(hasApiKey ? 'success' : 'warning',
+                     'مفتاح API',
+                     hasApiKey ? '✅ مُعرَّف' : '⚠️ غير مُعرَّف أو تجريبي');
+            
+            // Test 4: AI Service
+            addResult(window.AIService ? 'success' : 'error',
+                     'خدمة الذكاء الاصطناعي',
+                     window.AIService ? '✅ محملة' : '❌ غير محملة');
+            
+            // Test 5: Browser Features
+            const features = [
+                { name: 'localStorage', check: () => !!window.localStorage },
+                { name: 'fetch', check: () => !!window.fetch },
+                { name: 'Canvas', check: () => !!document.createElement('canvas').getContext }
+            ];
+            
+            features.forEach(feature => {
+                addResult(feature.check() ? 'success' : 'error',
+                         feature.name,
+                         feature.check() ? '✅ مدعوم' : '❌ غير مدعوم');
+            });
+            
+            // Overall status
+            const hasErrors = document.querySelectorAll('.error').length > 0;
+            const hasWarnings = document.querySelectorAll('.warning').length > 0;
+            
+            let statusMessage = '';
+            let statusClass = '';
+            
+            if (hasErrors) {
+                statusMessage = '❌ يحتاج إصلاح - هناك أخطاء';
+                statusClass = 'error';
+            } else if (hasWarnings) {
+                statusMessage = '⚠️ جاهز مع تحذيرات - يمكن تشغيله';
+                statusClass = 'warning';
+            } else {
+                statusMessage = '✅ جاهز تماماً - يمكن استخدامه';
+                statusClass = 'success';
+            }
+            
+            addResult(statusClass, 'الحالة العامة', `<span class="status">${statusMessage}</span>`);
+        };
+        
+        window.testAI = async function() {
+            const results = document.getElementById('results');
+            addResult('info', 'اختبار AI', '🔄 جاري اختبار الاتصال مع DeepSeek...');
+            
+            try {
+                const suggestions = await window.AIService.generateSuggestions('تطوير وبرمجة', 'تطوير المواقع', 3);
+                addResult(suggestions.length > 0 ? 'success' : 'warning',
+                         'نتيجة اختبار AI',
+                         suggestions.length > 0 ? `✅ تم إنشاء ${suggestions.length} اقتراحات` : '⚠️ تم استخدام اقتراحات احتياطية');
+            } catch (error) {
+                addResult('error', 'خطأ في AI', `❌ ${error.message}`);
+            }
+        };
+        
+        window.openApp = function() {
+            window.open('index.html', '_blank');
+        };
+        
+        function addResult(type, title, message) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-item ${type}`;
+            div.innerHTML = `<strong>${title}:</strong> ${message}`;
+            results.appendChild(div);
+        }
+        
+        // Auto-run test
+        setTimeout(() => {
+            runQuickTest();
+        }, 500);
+    </script>
+</body>
+</html>

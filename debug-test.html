@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار الإصلاحات - منشئ خدمات خمسات</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .success { background: #d4edda; border-left-color: #28a745; }
+        .error { background: #f8d7da; border-left-color: #dc3545; }
+        .warning { background: #fff3cd; border-left-color: #ffc107; }
+        .info { background: #d1ecf1; border-left-color: #17a2b8; }
+        .loading { background: #e2e3e5; border-left-color: #6c757d; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 اختبار الإصلاحات الجديدة</h1>
+            <p>اختبار شامل لجميع الإصلاحات في منشئ خدمات خمسات</p>
+        </div>
+        
+        <div class="content">
+            <div class="test-section">
+                <h3>⚡ الاختبارات السريعة</h3>
+                <button onclick="testEnvironment()">🌍 اختبار البيئة</button>
+                <button onclick="testConfigs()">⚙️ اختبار الإعدادات</button>
+                <button onclick="testAIService()">🤖 اختبار AI Service</button>
+                <button onclick="testImageService()">🖼️ اختبار Image Service</button>
+                <button onclick="runAllTests()">🚀 تشغيل جميع الاختبارات</button>
+            </div>
+            
+            <div id="progress-section" style="display: none;">
+                <h4>📊 تقدم الاختبار</h4>
+                <div class="progress">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div id="progress-text">0%</div>
+            </div>
+            
+            <div id="results">
+                <div class="info">
+                    <strong>مرحباً!</strong> اختر اختباراً من الأعلى أو شغل جميع الاختبارات معاً.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load environment first -->
+    <script src="js/config/environment.js"></script>
+    
+    <script type="module">
+        import { API_CONFIG, APP_CONFIG } from './js/config/api.js';
+        import AIService from './js/services/aiService.js';
+        import ImageService from './js/services/imageService.js';
+        
+        // Make available globally for testing
+        window.API_CONFIG = API_CONFIG;
+        window.APP_CONFIG = APP_CONFIG;
+        window.AIService = AIService;
+        window.ImageService = ImageService;
+        
+        let currentTestIndex = 0;
+        let totalTests = 0;
+        
+        function updateProgress(current, total) {
+            const percentage = Math.round((current / total) * 100);
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const progressSection = document.getElementById('progress-section');
+            
+            progressSection.style.display = 'block';
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `${percentage}% (${current}/${total})`;
+        }
+        
+        function addResult(type, title, message, details = null) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            
+            let content = `<strong>${title}:</strong> ${message}`;
+            if (details) {
+                content += `<pre>${details}</pre>`;
+            }
+            div.innerHTML = content;
+            results.appendChild(div);
+            
+            // Scroll to latest result
+            div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        window.testEnvironment = function() {
+            clearResults();
+            addResult('info', '🌍 اختبار البيئة', 'بدء الاختبار...');
+            
+            try {
+                if (window.ENV) {
+                    addResult('success', '✅ كائن البيئة', 'تم تحميله بنجاح');
+                    addResult('info', '🔧 البيئة الحالية', window.ENV.getEnvironment());
+                    addResult('info', '🖥️ وضع التطوير', window.ENV.isDev() ? 'مفعل' : 'معطل');
+                    
+                    // Test environment switching
+                    const originalEnv = window.ENV.getEnvironment();
+                    window.ENV.setEnvironment('production');
+                    if (window.ENV.getEnvironment() === 'production') {
+                        addResult('success', '✅ تبديل البيئة', 'يعمل بشكل صحيح');
+                        window.ENV.setEnvironment(originalEnv); // Restore
+                    } else {
+                        addResult('error', '❌ تبديل البيئة', 'لا يعمل بشكل صحيح');
+                    }
+                } else {
+                    addResult('error', '❌ كائن البيئة', 'غير محمل');
+                }
+            } catch (error) {
+                addResult('error', '❌ خطأ في البيئة', error.message);
+            }
+        };
+        
+        window.testConfigs = function() {
+            clearResults();
+            addResult('info', '⚙️ اختبار الإعدادات', 'بدء الاختبار...');
+            
+            // Test API_CONFIG
+            if (window.API_CONFIG) {
+                addResult('success', '✅ API_CONFIG', 'محمل بنجاح');
+                
+                const hasApiKey = window.API_CONFIG.DEEPSEEK?.API_KEY && 
+                                window.API_CONFIG.DEEPSEEK.API_KEY !== 'your-api-key-here';
+                addResult(hasApiKey ? 'success' : 'warning', 
+                         '🔑 مفتاح API', 
+                         hasApiKey ? 'مُعرَّف ومُعد' : 'تجريبي أو غير مُعد');
+            } else {
+                addResult('error', '❌ API_CONFIG', 'غير محمل');
+            }
+            
+            // Test APP_CONFIG
+            if (window.APP_CONFIG) {
+                addResult('success', '✅ APP_CONFIG', 'محمل بنجاح');
+                
+                if (window.APP_CONFIG.THUMBNAILS?.WIDTH) {
+                    addResult('success', '✅ إعدادات الصور', `العرض: ${window.APP_CONFIG.THUMBNAILS.WIDTH}px`);
+                } else {
+                    addResult('error', '❌ إعدادات الصور', 'غير مُعرَّفة');
+                }
+            } else {
+                addResult('error', '❌ APP_CONFIG', 'غير محمل');
+            }
+        };
+        
+        window.testAIService = async function() {
+            clearResults();
+            addResult('info', '🤖 اختبار AI Service', 'بدء الاختبار...');
+            
+            if (!window.AIService) {
+                addResult('error', '❌ AI Service', 'غير محمل');
+                return;
+            }
+            
+            addResult('success', '✅ AI Service', 'محمل بنجاح');
+            
+            // Test fallback suggestions
+            try {
+                const fallbackSuggestions = window.AIService.getFallbackSuggestions();
+                if (fallbackSuggestions && fallbackSuggestions.length > 0) {
+                    addResult('success', '✅ الاقتراحات الاحتياطية', 
+                             `${fallbackSuggestions.length} اقتراحات متوفرة`,
+                             JSON.stringify(fallbackSuggestions.slice(0, 2), null, 2));
+                } else {
+                    addResult('error', '❌ الاقتراحات الاحتياطية', 'غير متوفرة');
+                }
+            } catch (error) {
+                addResult('error', '❌ الاقتراحات الاحتياطية', error.message);
+            }
+            
+            // Test fallback gallery examples
+            try {
+                const fallbackGallery = window.AIService.getFallbackGalleryExamples();
+                if (fallbackGallery && fallbackGallery.length > 0) {
+                    addResult('success', '✅ أمثلة المعرض الاحتياطية', 
+                             `${fallbackGallery.length} أمثلة متوفرة`,
+                             JSON.stringify(fallbackGallery.slice(0, 2), null, 2));
+                } else {
+                    addResult('error', '❌ أمثلة المعرض الاحتياطية', 'غير متوفرة');
+                }
+            } catch (error) {
+                addResult('error', '❌ أمثلة المعرض الاحتياطية', error.message);
+            }
+            
+            // Test real AI if API key is available
+            if (window.API_CONFIG?.DEEPSEEK?.API_KEY && 
+                window.API_CONFIG.DEEPSEEK.API_KEY !== 'your-api-key-here') {
+                
+                addResult('loading', '⏳ اختبار AI حقيقي', 'جاري الاتصال...');
+                
+                try {
+                    const suggestions = await window.AIService.generateSuggestions('تطوير وبرمجة', 'تطوير المواقع', 3);
+                    
+                    if (suggestions && suggestions.length > 0) {
+                        addResult('success', '✅ AI حقيقي', 
+                                 `تم إنشاء ${suggestions.length} اقتراحات`,
+                                 JSON.stringify(suggestions.slice(0, 1), null, 2));
+                    } else {
+                        addResult('warning', '⚠️ AI حقيقي', 'لم يتم إنشاء اقتراحات، تم استخدام الاحتياطية');
+                    }
+                } catch (error) {
+                    addResult('warning', '⚠️ AI حقيقي', `خطأ في الاتصال: ${error.message}`);
+                }
+            } else {
+                addResult('info', 'ℹ️ AI حقيقي', 'تم تخطيه - مفتاح API غير مُعد');
+            }
+        };
+        
+        window.testImageService = async function() {
+            clearResults();
+            addResult('info', '🖼️ اختبار Image Service', 'بدء الاختبار...');
+            
+            if (!window.ImageService) {
+                addResult('error', '❌ Image Service', 'غير محمل');
+                return;
+            }
+            
+            addResult('success', '✅ Image Service', 'محمل بنجاح');
+            
+            // Test Canvas support
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    addResult('success', '✅ Canvas API', 'مدعوم في المتصفح');
+                } else {
+                    addResult('error', '❌ Canvas API', 'غير مدعوم');
+                    return;
+                }
+            } catch (error) {
+                addResult('error', '❌ Canvas API', error.message);
+                return;
+            }
+            
+            // Test thumbnail generation
+            addResult('loading', '⏳ إنشاء صورة تجريبية', 'جاري الإنشاء...');
+            
+            try {
+                const testService = {
+                    name: 'خدمة تجريبية',
+                    title: 'خدمة تجريبية للاختبار',
+                    price: 50
+                };
+                
+                const thumbnailUrl = await window.ImageService.generateThumbnail(testService, 'وصف تجريبي');
+                
+                if (thumbnailUrl && thumbnailUrl.startsWith('data:image')) {
+                    addResult('success', '✅ إنشاء الصور', 'تم إنشاء صورة تجريبية بنجاح');
+                    
+                    // Show preview
+                    const img = document.createElement('img');
+                    img.src = thumbnailUrl;
+                    img.style.maxWidth = '300px';
+                    img.style.maxHeight = '200px';
+                    img.style.borderRadius = '5px';
+                    img.style.marginTop = '10px';
+                    
+                    const previewDiv = document.createElement('div');
+                    previewDiv.innerHTML = '<strong>🖼️ معاينة الصورة:</strong>';
+                    previewDiv.appendChild(img);
+                    previewDiv.className = 'test-result info';
+                    document.getElementById('results').appendChild(previewDiv);
+                } else {
+                    addResult('warning', '⚠️ إنشاء الصور', 'تم استخدام صورة احتياطية');
+                }
+            } catch (error) {
+                addResult('error', '❌ إنشاء الصور', error.message);
+            }
+        };
+        
+        window.runAllTests = async function() {
+            clearResults();
+            totalTests = 4;
+            currentTestIndex = 0;
+            
+            addResult('info', '🚀 بدء جميع الاختبارات', 'تشغيل الاختبارات الشاملة...');
+            
+            const tests = [
+                { name: 'اختبار البيئة', fn: window.testEnvironment },
+                { name: 'اختبار الإعدادات', fn: window.testConfigs },
+                { name: 'اختبار AI Service', fn: window.testAIService },
+                { name: 'اختبار Image Service', fn: window.testImageService }
+            ];
+            
+            for (let i = 0; i < tests.length; i++) {
+                currentTestIndex = i + 1;
+                updateProgress(currentTestIndex, totalTests);
+                
+                addResult('info', '▶️ تشغيل', `${tests[i].name}...`);
+                
+                try {
+                    await tests[i].fn();
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between tests
+                } catch (error) {
+                    addResult('error', '❌ خطأ في الاختبار', `${tests[i].name}: ${error.message}`);
+                }
+            }
+            
+            updateProgress(totalTests, totalTests);
+            addResult('success', '🎉 اكتملت جميع الاختبارات', 'تم الانتهاء من جميع الاختبارات بنجاح!');
+        };
+        
+        // Auto-run environment test on load
+        setTimeout(() => {
+            window.testEnvironment();
+        }, 500);
+    </script>
+</body>
+</html>

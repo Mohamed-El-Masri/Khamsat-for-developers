@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منشئ خدمات خمسات بالذكاء الاصطناعي</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/utilities.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-robot me-2"></i>
+                منشئ خدمات خمسات AI
+            </a>
+            <nav class="navbar-nav flex-row me-auto">
+                <a href="index.html" class="nav-link px-3 active">
+                    <i class="fas fa-home me-1"></i>
+                    الرئيسية
+                </a>
+                <a href="favorites.html" class="nav-link px-3">
+                    <i class="fas fa-heart me-1"></i>
+                    المفضلة
+                    <span class="badge bg-danger ms-1" id="favoritesCount" style="display: none;">0</span>
+                </a>
+            </nav>
+            <div class="navbar-text text-light">
+                <small>developed by Eng Mohamed Elmasri - ITI Sohag</small>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center min-vh-100">
+                    <div class="col-lg-6">
+                        <h1 class="display-4 fw-bold text-primary mb-4">
+                            إنشاء خدمات احترافية على خمسات
+                            <span class="text-success">بالذكاء الاصطناعي</span>
+                        </h1>
+                        <p class="lead text-muted mb-4">
+                            اختر التصنيف والفئة الفرعية واحصل على خدمات مقترحة احترافية كاملة التفاصيل مع الصور والأوصاف والمحتوى الجاهز للنشر
+                        </p>
+                        <button class="btn btn-primary btn-lg px-5 py-3" id="startBtn">
+                            <i class="fas fa-rocket me-2"></i>
+                            ابدأ الآن
+                        </button>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="hero-animation">
+                            <i class="fas fa-brain fa-10x text-primary opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Selection -->
+        <section class="category-selection d-none" id="categorySection">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-header bg-gradient text-white text-center py-4">
+                                <h2 class="mb-0">
+                                    <i class="fas fa-list-alt me-2"></i>
+                                    اختر التصنيف والفئة الفرعية
+                                </h2>
+                            </div>
+                            <div class="card-body p-5">
+                                <div class="row">
+                                    <!-- Main Category -->
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-bold">التصنيف الرئيسي</label>
+                                        <select class="form-select form-select-lg" id="mainCategory">
+                                            <option value="">اختر التصنيف</option>
+                                            <option value="development">تطوير وبرمجة</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Sub Category -->
+                                    <div class="col-md-6 mb-4">
+                                        <label class="form-label fw-bold">الفئة الفرعية</label>
+                                        <select class="form-select form-select-lg" id="subCategory" disabled>
+                                            <option value="">اختر الفئة الفرعية</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button class="btn btn-success btn-lg px-5" id="generateBtn" disabled>
+                                        <i class="fas fa-magic me-2"></i>
+                                        إنشاء الاقتراحات
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section class="loading-section d-none" id="loadingSection">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card shadow border-0">
+                            <div class="card-body text-center p-5">
+                                <div class="spinner-border text-primary mb-4" role="status" style="width: 4rem; height: 4rem;">
+                                    <span class="visually-hidden">جاري التحميل...</span>
+                                </div>
+                                <h3 class="text-primary mb-3">جاري إنشاء الاقتراحات...</h3>
+                                <p class="text-muted">الذكاء الاصطناعي يعمل على إنشاء أفضل الاقتراحات لك</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suggestions Section -->
+        <section class="suggestions-section d-none" id="suggestionsSection">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-header bg-success text-white text-center py-4">
+                                <h2 class="mb-2">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    الاقتراحات المُنشأة
+                                </h2>
+                                <p class="mb-0">اختر الخدمات التي تريد تفاصيلها الكاملة</p>
+                            </div>
+                            <div class="card-body p-4">
+                                <div id="suggestionsContainer" class="row">
+                                    <!-- Suggestions will be inserted here -->
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-outline-primary me-3" id="moreBtn">
+                                        <i class="fas fa-plus me-2"></i>
+                                        10 اقتراحات أخرى
+                                    </button>
+                                    <button class="btn btn-primary" id="getDetailsBtn" disabled>
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        الحصول على التفاصيل الكاملة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Details Section -->
+        <section class="service-details d-none" id="serviceDetailsSection">
+            <div class="container">
+                <div id="serviceDetailsContainer">
+                    <!-- Service details will be inserted here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="fw-bold">منشئ خدمات خمسات بالذكاء الاصطناعي</h6>
+                    <p class="text-muted small">
+                        تطوير: المهندس محمد سامح المصري<br>
+                        بإشراف: معهد تكنولوجيا المعلومات ITI - فرع سوهاج
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted small mb-0">
+                        جميع الحقوق محفوظة © 2025
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Environment Configuration (loaded first) -->
+    <script src="js/config/environment.js"></script>
+    
+    <!-- Custom JS Modules -->
+    <script type="module" src="js/config/api.js"></script>
+    <script type="module" src="js/data/categories.js"></script>
+    <script type="module" src="js/services/aiService.js"></script>
+    <script type="module" src="js/services/imageService.js"></script>
+    <script type="module" src="js/utils/helpers.js"></script>
+    <script type="module" src="js/components/suggestionCard.js"></script>
+    <script type="module" src="js/components/serviceDetails.js"></script>
+    <script type="module" src="js/controllers/categoryController.js"></script>
+    <script type="module" src="js/controllers/suggestionController.js"></script>
+    <script type="module" src="js/controllers/serviceController.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

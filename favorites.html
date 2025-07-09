@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المفضلة والتاريخ - منشئ خدمات خمسات</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/utilities.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <i class="fas fa-robot me-2"></i>
+                منشئ خدمات خمسات AI
+            </a>
+            <nav class="navbar-nav flex-row me-auto">
+                <a href="index.html" class="nav-link px-3">
+                    <i class="fas fa-home me-1"></i>
+                    الرئيسية
+                </a>
+                <a href="favorites.html" class="nav-link px-3 active">
+                    <i class="fas fa-heart me-1"></i>
+                    المفضلة
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container my-5">
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h2 text-primary mb-2">
+                                <i class="fas fa-heart me-2"></i>
+                                المفضلة والتاريخ
+                            </h1>
+                            <p class="text-muted">إدارة الخدمات المحفوظة وتاريخ البحث</p>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog me-1"></i>
+                                إدارة البيانات
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" id="exportDataBtn">
+                                    <i class="fas fa-download me-2"></i>تصدير البيانات
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" id="importDataBtn">
+                                    <i class="fas fa-upload me-2"></i>استيراد البيانات
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#" id="clearAllDataBtn">
+                                    <i class="fas fa-trash me-2"></i>مسح جميع البيانات
+                                </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4" id="statsCards">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-heart fa-2x mb-2"></i>
+                            <h4 class="mb-0" id="totalFavorites">0</h4>
+                            <small>إجمالي المفضلة</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-search fa-2x mb-2"></i>
+                            <h4 class="mb-0" id="totalSearches">0</h4>
+                            <small>إجمالي البحث</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-star fa-2x mb-2"></i>
+                            <h4 class="mb-0" id="favoritesThisWeek">0</h4>
+                            <small>مفضلة هذا الأسبوع</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clock fa-2x mb-2"></i>
+                            <h4 class="mb-0" id="searchesToday">0</h4>
+                            <small>بحث اليوم</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="favorites-tab" data-bs-toggle="tab" data-bs-target="#favorites" type="button" role="tab">
+                        <i class="fas fa-heart me-2"></i>
+                        المفضلة (<span id="favoritesCount">0</span>)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
+                        <i class="fas fa-history me-2"></i>
+                        تاريخ البحث (<span id="historyCount">0</span>)
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="mainTabsContent">
+                <!-- Favorites Tab -->
+                <div class="tab-pane fade show active" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="favoritesSearch" placeholder="بحث في المفضلة...">
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select" id="favoritesSort">
+                                <option value="newest">الأحدث أولاً</option>
+                                <option value="oldest">الأقدم أولاً</option>
+                                <option value="title">حسب العنوان</option>
+                                <option value="category">حسب التصنيف</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="favoritesList" class="row">
+                        <!-- Favorites will be loaded here -->
+                    </div>
+                    <div id="favoritesEmpty" class="text-center py-5" style="display: none;">
+                        <i class="fas fa-heart-broken fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">لا توجد خدمات محفوظة</h4>
+                        <p class="text-muted">ابدأ بحفظ بعض الخدمات من الصفحة الرئيسية</p>
+                        <a href="index.html" class="btn btn-primary">اذهب للصفحة الرئيسية</a>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="historySearch" placeholder="بحث في التاريخ...">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="historySort">
+                                <option value="newest">الأحدث أولاً</option>
+                                <option value="oldest">الأقدم أولاً</option>
+                                <option value="category">حسب التصنيف</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-danger w-100" id="clearHistoryBtn">
+                                <i class="fas fa-trash me-1"></i>
+                                مسح التاريخ
+                            </button>
+                        </div>
+                    </div>
+                    <div id="historyList">
+                        <!-- History will be loaded here -->
+                    </div>
+                    <div id="historyEmpty" class="text-center py-5" style="display: none;">
+                        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">لا يوجد تاريخ بحث</h4>
+                        <p class="text-muted">قم ببعض عمليات البحث لتظهر هنا</p>
+                        <a href="index.html" class="btn btn-primary">ابدأ البحث</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Hidden File Input for Import -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+
+    <!-- Service Detail Modal -->
+    <div class="modal fade" id="serviceDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تفاصيل الخدمة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="serviceDetailContent">
+                    <!-- Service details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-primary" id="copyServiceBtn">
+                        <i class="fas fa-copy me-1"></i>
+                        نسخ التفاصيل
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Environment Config (must be loaded first) -->
+    <script src="js/config/environment.js"></script>
+    
+    <!-- Application Scripts -->
+    <script type="module" src="js/favorites.js"></script>
+</body>
+</html>
