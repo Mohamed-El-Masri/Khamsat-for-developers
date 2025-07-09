@@ -494,7 +494,6 @@ export class ServiceDetails {
             text += `تعليمات للمشتري:\n${this.details.instructions}\n\n`;
         }
         
-        text += `\n---\nتم الإنشاء بواسطة: منشئ خدمات خمسات AI\nالمطور: المهندس محمد سامح المصري\nالإشراف: ITI - فرع سوهاج`;
         
         return text;
     }
